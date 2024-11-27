@@ -1,6 +1,14 @@
 from PySide6.QtCore import QSize
 from PySide6.QtGui import QAction
-from PySide6.QtWidgets import QMainWindow, QToolBar, QMessageBox
+from PySide6.QtWidgets import (
+    QMainWindow,
+    QWidget,
+    QToolBar,
+    QMessageBox,
+    QPushButton,
+    QVBoxLayout,
+    QFileDialog,
+)
 
 
 # MainWindow inherits from QMainWindow
@@ -42,6 +50,15 @@ class MainWindow(QMainWindow):
         toolbar.addSeparator()
         toolbar.addAction(axnQuit)
 
+        # Note; a layout cannot be the "central widget" of a QMainWindow; so create a QWidget, give it a layout and set the QWidget as the central widget.
+        central = QWidget()
+        layout = QVBoxLayout()
+        central.setLayout(layout)
+        btnBrowse = QPushButton("Browse...")
+        btnBrowse.clicked.connect(self.handleBrowse)
+        layout.addWidget(btnBrowse)
+        self.setCentralWidget(central)
+
     # Action handler
     def quitApp(self):
         self.app.quit()
@@ -62,3 +79,9 @@ class MainWindow(QMainWindow):
 
         # And throw up a message box
         QMessageBox.information(self, "Information", msg)
+
+    def handleBrowse(self):
+        fileDialog = QFileDialog(
+            self, caption="Save file as", directory=".", filter="All Files(*.*)"
+        )
+        fileDialog.open()
